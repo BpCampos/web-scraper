@@ -32,7 +32,7 @@ def scrape_page(url):
     return data
 
 
-def main():
+def scrape_pages():
     all_data = []
 
     for page_number in range(1, 5):
@@ -49,7 +49,7 @@ def main():
     return all_data
 
 
-df = pd.DataFrame(main())
+df = pd.DataFrame(scrape_pages())
 df.to_csv('~/Desktop/output.csv', sep=',', index=False)
 
 print(df)
