@@ -19,11 +19,14 @@ for item in soup.find_all('a', class_='product-card--wrapper'):
         price_integer = item.find(class_='integer').contents[0]
         price_decimal = item.find(class_='decimal').contents[0]
         final_price = price_integer + price_decimal
+        final_price = final_price.replace(',', '.')
         data.append({
             'title': title,
             'discount': discount,
-            'price': final_price
+            'price': float(final_price)
         })
+
+    return data
 ```
 
 ### If the website you're scraping from has more than one page of content that you want, you can use the loop function
