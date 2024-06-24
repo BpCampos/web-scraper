@@ -23,10 +23,11 @@ def scrape_page(url):
         price_integer = item.find(class_='integer').contents[0]
         price_decimal = item.find(class_='decimal').contents[0]
         final_price = price_integer + price_decimal
+        final_price = final_price.replace(',', '.')
         data.append({
             'title': title,
             'discount': discount,
-            'price': final_price
+            'price': float(final_price)
         })
 
     return data
@@ -49,7 +50,11 @@ def scrape_pages():
     return all_data
 
 
+scrape_page(
+    'https://www.nuuvem.com/br-pt/catalog/platforms/pc/price/promo/sort/bestselling/sort-mode/desc')
+
 df = pd.DataFrame(scrape_pages())
+df = df.sort_values(by=['discount'], ascending=False)
 df.to_csv('~/Desktop/output.csv', sep=',', index=False)
 
 print(df)
