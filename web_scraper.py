@@ -3,13 +3,18 @@ import requests
 from bs4 import BeautifulSoup
 import time
 
+contador = 0
+
 
 def scrape_page(url):
     response = requests.get(url)
 
+    if contador == 0:
+        print(f'Status: {response.status_code}')
+        contador += 1
+
     if response.status_code == 200:
         html_content = response.content
-        print(f'Status: {response.status_code}')
     else:
         print(f'Failed to retrieve the content: {response.status_code}')
 
@@ -36,25 +41,22 @@ def scrape_page(url):
 def scrape_pages():
     all_data = []
 
-    for page_number in range(1, 5):
+    for page_number in range(1, 25):
         if page_number == 1:
             page_data = scrape_page(
-                'https://www.nuuvem.com/br-pt/catalog/platforms/pc/price/promo/sort/bestselling/sort-mode/desc')
+                'https://www.nuuvem.com/br-pt/catalog/drm/steam/platforms/pc/price/promo/sort/bestselling/sort-mode/desc')
             all_data.extend(page_data)
         else:
+            print(f"Scraping page: {page_number}")
             page_data = scrape_page(
-                f'https://www.nuuvem.com/br-pt/catalog/platforms/pc/price/promo/sort/bestselling/sort-mode/desc/page/{page_number}')
+                f'https://www.nuuvem.com/br-pt/catalog/drm/steam/platforms/pc/price/promo/sort/bestselling/sort-mode/desc/page/{page_number}')
             all_data.extend(page_data)
         time.sleep(2)
 
+    print('Scrape successfully completed')
     return all_data
 
-
-scrape_page(
-    'https://www.nuuvem.com/br-pt/catalog/platforms/pc/price/promo/sort/bestselling/sort-mode/desc')
 
 df = pd.DataFrame(scrape_pages())
 df = df.sort_values(by=['discount'], ascending=False)
 df.to_csv('~/Desktop/output.csv', sep=',', index=False)
-
-print(df)
